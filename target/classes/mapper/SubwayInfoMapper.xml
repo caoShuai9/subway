@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.subway.ssm.mapper.SubwayInfoMapper">
+  <resultMap id="BaseResultMap" type="com.subway.ssm.entity.SubwayInfo">
+    <id column="subway_id" jdbcType="BIGINT" property="subwayId" />
+    <result column="subway_name" jdbcType="VARCHAR" property="subwayName" />
+    <result column="subway_remark" jdbcType="VARCHAR" property="subwayRemark" />
+    <result column="starting_time" jdbcType="TIMESTAMP" property="startingTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    subway_id, subway_name, subway_remark, starting_time, end_time
+  </sql>
+  <select id="selectByExample" parameterType="com.subway.ssm.entity.SubwayInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from subway_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="rows != null">
+      <if test="offset != null">
+        limit ${offset}, ${rows}
+      </if>
+      <if test="offset == null">
+        limit ${rows}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from subway_info
+    where subway_id = #{subwayId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from subway_info
+    where subway_id = #{subwayId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.subway.ssm.entity.SubwayInfoExample">
+    delete from subway_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.subway.ssm.entity.SubwayInfo">
+    insert into subway_info (subway_id, subway_name, subway_remark, 
+      starting_time, end_time)
+    values (#{subwayId,jdbcType=BIGINT}, #{subwayName,jdbcType=VARCHAR}, #{subwayRemark,jdbcType=VARCHAR}, 
+      #{startingTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.subway.ssm.entity.SubwayInfo">
+    insert into subway_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="subwayId != null">
+        subway_id,
+      </if>
+      <if test="subwayName != null">
+        subway_name,
+      </if>
+      <if test="subwayRemark != null">
+        subway_remark,
+      </if>
+      <if test="startingTime != null">
+        starting_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="subwayId != null">
+        #{subwayId,jdbcType=BIGINT},
+      </if>
+      <if test="subwayName != null">
+        #{subwayName,jdbcType=VARCHAR},
+      </if>
+      <if test="subwayRemark != null">
+        #{subwayRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="startingTime != null">
+        #{startingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.subway.ssm.entity.SubwayInfoExample" resultType="java.lang.Long">
+    select count(*) from subway_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update subway_info
+    <set>
+      <if test="record.subwayId != null">
+        subway_id = #{record.subwayId,jdbcType=BIGINT},
+      </if>
+      <if test="record.subwayName != null">
+        subway_name = #{record.subwayName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.subwayRemark != null">
+        subway_remark = #{record.subwayRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startingTime != null">
+        starting_time = #{record.startingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endTime != null">
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update subway_info
+    set subway_id = #{record.subwayId,jdbcType=BIGINT},
+      subway_name = #{record.subwayName,jdbcType=VARCHAR},
+      subway_remark = #{record.subwayRemark,jdbcType=VARCHAR},
+      starting_time = #{record.startingTime,jdbcType=TIMESTAMP},
+      end_time = #{record.endTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.subway.ssm.entity.SubwayInfo">
+    update subway_info
+    <set>
+      <if test="subwayName != null">
+        subway_name = #{subwayName,jdbcType=VARCHAR},
+      </if>
+      <if test="subwayRemark != null">
+        subway_remark = #{subwayRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="startingTime != null">
+        starting_time = #{startingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where subway_id = #{subwayId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.subway.ssm.entity.SubwayInfo">
+    update subway_info
+    set subway_name = #{subwayName,jdbcType=VARCHAR},
+      subway_remark = #{subwayRemark,jdbcType=VARCHAR},
+      starting_time = #{startingTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP}
+    where subway_id = #{subwayId,jdbcType=BIGINT}
+  </update>
+  <select id="sumByExample" parameterType="com.subway.ssm.entity.SubwayInfoExample" resultType="java.util.Map" >
+    select
+    <foreach collection="sumCols" index="index" item="item" separator=",">
+      sum(${item}) as sum${index}
+    </foreach>
+    from subway_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+</mapper>

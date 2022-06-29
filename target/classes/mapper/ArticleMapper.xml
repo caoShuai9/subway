@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.subway.ssm.mapper.ArticleMapper">
+    <resultMap id="BaseResultMap" type="com.subway.ssm.entity.Article">
+        <id column="article_id" property="articleId" jdbcType="INTEGER"/>
+        <result column="article_user_id" property="articleUserId" jdbcType="INTEGER"/>
+        <result column="article_title" property="articleTitle" jdbcType="VARCHAR"/>
+        <result column="article_content" property="articleContent" jdbcType="LONGVARCHAR"/>
+        <result column="article_summary" property="articleSummary" jdbcType="VARCHAR"/>
+        <result column="article_view_count" property="articleViewCount" jdbcType="INTEGER"/>
+        <result column="article_comment_count" property="articleCommentCount" jdbcType="INTEGER"/>
+        <result column="article_like_count" property="articleLikeCount" jdbcType="INTEGER"/>
+        <result column="article_is_comment" property="articleIsComment" jdbcType="INTEGER"/>
+        <result column="article_order" property="articleOrder" jdbcType="INTEGER"/>
+        <result column="article_create_time" property="articleCreateTime" jdbcType="TIMESTAMP"/>
+        <result column="article_update_time" property="articleUpdateTime" jdbcType="TIMESTAMP"/>
+        <result column="article_status" property="articleStatus" jdbcType="INTEGER"/>
+        <result column="article_type" property="articleType" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="tb">article</sql>
+
+    <sql id="Base_Column_List">
+    article_id, article_user_id, article_title, article_content,article_summary, article_view_count, article_comment_count, article_like_count, article_create_time,
+    article_update_time, article_is_comment, article_status, article_type, article_order
+    </sql>
+
+
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        article.*
+        FROM
+        article
+        <where>
+--             article.article_type = 1 AND
+            <if test="status != null">
+                article.article_status = #{status} AND
+            </if>
+            <if test="keywords != null">
+                article.article_title LIKE concat(concat('%',#{keywords}),'%') AND
+            </if>
+            <if test="userId != null">
+                article.article_user_id = #{userId} AND
+            </if>
+            <if test="categoryId != null">
+                article.article_id IN (
+                SELECT article_category_ref.article_id FROM article_category_ref
+                WHERE article_category_ref.category_id = #{categoryId}
+                ) AND
+            </if>
+            <if test="tagId != null">
+                article.article_id IN (
+                SELECT article_tag_ref.article_id FROM article_tag_ref
+                WHERE article_tag_ref.tag_id = #{tagId}
+                ) AND
+            </if>
+            1 = 1
+        </where>
+        ORDER BY `article`.`article_order` DESC, `article`.`article_id` DESC
+    </select>
+
+    <select id="findCommonAll" resultMap="BaseResultMap">
+        SELECT
+        article.*
+        FROM
+        article
+        <where>
+                article.article_type = 1 AND
+            <if test="status != null">
+                article.article_status = #{status} AND
+            </if>
+            <if test="keywords != null">
+                article.article_title LIKE concat(concat('%',#{keywords}),'%') AND
+            </if>
+            <if test="userId != null">
+                article.article_user_id = #{userId} AND
+            </if>
+            <if test="categoryId != null">
+                article.article_id IN (
+                SELECT article_category_ref.article_id FROM article_category_ref
+                WHERE article_category_ref.category_id = #{categoryId}
+                ) AND
+            </if>
+            <if test="tagId != null">
+                article.article_id IN (
+                SELECT article_tag_ref.article_id FROM article_tag_ref
+                WHERE article_tag_ref.tag_id = #{tagId}
+                ) AND
+            </if>
+            1 = 1
+        </where>
+        ORDER BY `article`.`article_order` DESC, `article`.`article_id` DESC
+    </select>
+
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tb"/>
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </delete>
+
+
+
+
+
+    <insert id="insert" parameterType="com.subway.ssm.entity.Article" useGeneratedKeys="true"
+            keyProperty="articleId">
+        insert into
+        <include refid="tb"/>
+        (article_user_id, article_title,
+        article_view_count, article_comment_count,
+        article_like_count, article_create_time, article_update_time,
+        article_is_comment, article_status, article_order,
+        article_content, article_summary, article_type)
+        values (#{articleUserId,jdbcType=INTEGER}, #{articleTitle,jdbcType=VARCHAR},
+        #{articleViewCount,jdbcType=INTEGER},
+        #{articleCommentCount,jdbcType=INTEGER},
+        #{articleLikeCount,jdbcType=INTEGER}, #{articleCreateTime,jdbcType=TIMESTAMP},
+        #{articleUpdateTime,jdbcType=TIMESTAMP},
+        #{articleIsComment,jdbcType=INTEGER}, #{articleStatus,jdbcType=INTEGER}, #{articleOrder,jdbcType=INTEGER},
+        #{articleContent,jdbcType=LONGVARCHAR}, #{articleSummary,jdbcType=VARCHAR}, #{articleType,jdbcType=VARCHAR})
+    </insert>
+
+
+    <update id="update" parameterType="com.subway.ssm.entity.Article">
+        update
+        <include refid="tb"/>
+        <set>
+            <if test="articleUserId != null">article_user_id = #{articleUserId,jdbcType=INTEGER},</if>
+            <if test="articleTitle != null">article_title = #{articleTitle,jdbcType=VARCHAR},</if>
+            <if test="articleViewCount != null">article_view_count = #{articleViewCount,jdbcType=INTEGER},</if>
+            <if test="articleCommentCount != null">article_comment_count = #{articleCommentCount,jdbcType=INTEGER},</if>
+            <if test="articleLikeCount != null">article_like_count = #{articleLikeCount,jdbcType=INTEGER},</if>
+            <if test="articleCreateTime != null">article_create_time = #{articleCreateTime,jdbcType=TIMESTAMP},</if>
+            <if test="articleUpdateTime != null">article_update_time = #{articleUpdateTime,jdbcType=TIMESTAMP},</if>
+            <if test="articleIsComment != null">article_is_comment = #{articleIsComment,jdbcType=INTEGER},</if>
+            <if test="articleStatus != null">article_status = #{articleStatus,jdbcType=INTEGER},</if>
+            <if test="articleOrder != null">article_order = #{articleOrder,jdbcType=INTEGER},</if>
+            <if test="articleContent != null">article_content = #{articleContent,jdbcType=LONGVARCHAR},</if>
+            <if test="articleSummary != null">article_summary = #{articleSummary,jdbcType=VARCHAR},</if>
+            <if test="articleType != null">article_type = #{articleType,jdbcType=INTEGER},</if>
+        </set>
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </update>
+
+
+
+
+
+
+    <select id="getArticleByStatusAndId" resultType="com.subway.ssm.entity.Article">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            <if test="status != null">
+                article_status = #{status} AND
+            </if>
+            article_id = #{id}
+        </where>
+    </select>
+
+
+
+
+    <!--获得下一篇的文章-->
+    <select id="getAfterArticle" resultType="com.subway.ssm.entity.Article">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            article_id > #{id} AND article_status = 1
+        </where>
+        ORDER BY article_id
+        limit 1
+    </select>
+    <!--获得上一篇的文章-->
+    <select id="getPreArticle" resultType="com.subway.ssm.entity.Article">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            article_id &lt; #{id} AND article_status = 1
+        </where>
+        ORDER BY article_id
+        limit 1
+    </select>
+
+
+
+    <!--获得随机热点文章-->
+    <select id="listRandomHostArticle" resultType="com.subway.ssm.entity.Article">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        WHERE article_status = 1 and article_type = 2
+        ORDER BY
+        RAND()
+        limit #{limit}
+    </select>
+
+    <!--获得失物招领招领信息-->
+    <select id="listLostFoundArticle" resultType="com.subway.ssm.entity.Article">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        WHERE article_status = 1 and article_type = 3
+        limit #{limit}
+    </select>
+
+
+
+    <update id="updateCommentCount" parameterType="Integer">
+        UPDATE
+        <include refid="tb"/>
+        SET article_comment_count =
+        (
+        SELECT count(*) FROM `comment`
+        WHERE article.article_id=comment.comment_article_id
+        )
+        WHERE article_id=#{articleId}
+    </update>
+
+
+
+    <select id="countArticleByUser" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(*)
+        FROM
+        <include refid="tb"/>
+        WHERE article_user_id=#{id} AND article_status = 1
+    </select>
+
+
+
+
+
+
+    <select id="listArticleByLimit" resultType="com.subway.ssm.entity.Article">
+        SELECT
+        article_id, article_user_id, article_title, article_view_count, article_comment_count, article_like_count,
+        article_create_time,
+        article_update_time, article_is_comment, article_status, article_order
+        FROM
+        <include refid="tb"/>
+        <where>
+            <if test="userId != null">
+                article_user_id = #{userId}
+            </if>
+        </where>
+        ORDER BY article_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="listArticleIdsByUserId" resultType="java.lang.Integer">
+        SELECT
+            article_id
+        FROM
+            <include refid="tb"/>
+        WHERE
+            article_user_id = #{userId}
+    </select>
+</mapper>

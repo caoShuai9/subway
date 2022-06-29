@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.subway.ssm.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.subway.ssm.entity.User">
+        <id column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_pass" property="userPass" jdbcType="VARCHAR"/>
+        <result column="user_nickname" property="userNickname" jdbcType="VARCHAR"/>
+        <result column="user_email" property="userEmail" jdbcType="VARCHAR"/>
+        <result column="user_url" property="userUrl" jdbcType="VARCHAR"/>
+        <result column="user_type" property="userType" jdbcType="VARCHAR"/>
+        <result column="user_last_login_ip" property="userLastLoginIp" jdbcType="VARCHAR"/>
+        <result column="user_register_time" property="userRegisterTime" jdbcType="TIMESTAMP"/>
+        <result column="user_last_login_time" property="userLastLoginTime" jdbcType="TIMESTAMP"/>
+        <result column="user_status" property="userStatus" jdbcType="INTEGER"/>
+        <result column="user_role" property="userRole" jdbcType="VARCHAR"/>
+<!--        <result column="wage" property="wage" jdbcType="VARCHAR"/>-->
+<!--        <result column="leader" property="leader" jdbcType="VARCHAR"/>-->
+<!--        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP"/>-->
+<!--        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>-->
+<!--        <result column="department" property="department" jdbcType="VARCHAR"/>-->
+    </resultMap>
+
+
+    <sql id="tb">user</sql>
+
+    <sql id="Base_Column_List">
+    user_id, user_name, user_pass, user_nickname, user_email, user_url, user_type,
+    user_last_login_ip, user_register_time, user_last_login_time, user_status, user_role
+--     , wage, leader, begin_time, end_time, department
+  </sql>
+
+    <select id="getUserById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from <include refid="tb"/>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from
+        <include refid="tb"/>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.subway.ssm.entity.User" useGeneratedKeys="true" keyProperty="userId">
+        insert into
+        <include refid="tb"/>
+        (user_id, user_name, user_pass,
+        user_nickname, user_email, user_url,
+        user_type, user_last_login_ip, user_register_time,
+        user_last_login_time, user_status, user_role)
+        values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{userPass,jdbcType=VARCHAR},
+        #{userNickname,jdbcType=VARCHAR}, #{userEmail,jdbcType=VARCHAR}, #{userUrl,jdbcType=VARCHAR},
+        #{userType,jdbcType=VARCHAR}, #{userLastLoginIp,jdbcType=VARCHAR}, #{userRegisterTime,jdbcType=TIMESTAMP},
+        #{userLastLoginTime,jdbcType=TIMESTAMP}, #{userStatus,jdbcType=INTEGER}, #{userRole,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="update" parameterType="com.subway.ssm.entity.User">
+        update
+        <include refid="tb"/>
+        <set>
+            <if test="userName != null">user_name = #{userName,jdbcType=VARCHAR},</if>
+            <if test="userPass != null">user_pass = #{userPass,jdbcType=VARCHAR},</if>
+            <if test="userNickname != null">user_nickname = #{userNickname,jdbcType=VARCHAR},</if>
+            <if test="userEmail != null">user_email = #{userEmail,jdbcType=VARCHAR},</if>
+            <if test="userUrl != null">user_url = #{userUrl,jdbcType=VARCHAR},</if>
+            <if test="userType != null">user_type = #{userType,jdbcType=VARCHAR},</if>
+            <if test="userLastLoginIp != null">user_last_login_ip = #{userLastLoginIp,jdbcType=VARCHAR},</if>
+            <if test="userRegisterTime != null">user_register_time = #{userRegisterTime,jdbcType=TIMESTAMP},</if>
+            <if test="userLastLoginTime != null">user_last_login_time = #{userLastLoginTime,jdbcType=TIMESTAMP},</if>
+            <if test="userStatus != null">user_status = #{userStatus,jdbcType=INTEGER},</if>
+            <if test="userRole != null">user_role = #{userRole,jdbcType=VARCHAR},</if>
+<!--            <if test="wage != null">wage = #{wage,jdbcType=VARCHAR},</if>-->
+<!--            <if test="leader != null">leader = #{leader,jdbcType=VARCHAR},</if>-->
+<!--            <if test="beginTime != null">begin_time = #{beginTime,jdbcType=TIMESTAMP},</if>-->
+<!--            <if test="endTime != null">end_time = #{endTime,jdbcType=TIMESTAMP},</if>-->
+<!--            <if test="department != null">department = #{department,jdbcType=VARCHAR},</if>-->
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+
+    <!--用户列表查询-->
+    <select id="listUser" parameterType="com.subway.ssm.entity.User"
+            resultType="com.subway.ssm.entity.User">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            user_id > 1
+        </where>
+        ORDER BY `user_status` ASC
+    </select>
+
+
+    <select id="listStaff"  parameterType="java.lang.String"
+            resultType="com.subway.ssm.entity.User">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            user_type!='1' and user_id > 1
+        </where>
+        ORDER BY `user_status` ASC
+    </select>
+
+
+
+    <select id="searchUser" parameterType="com.subway.ssm.entity.User"
+            resultType="com.subway.ssm.entity.User">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            user_nickname like CONCAT('%',#{keywords,jdbcType=VARCHAR},'%')
+        </where>
+        ORDER BY `user_status` ASC
+    </select>
+
+
+
+
+    <!--根据用户名或邮箱获得用户-->
+    <select id="getUserByNameOrEmail" parameterType="String" resultType="com.subway.ssm.entity.User">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            user_name=#{value} OR user_email=#{value}
+        </where>
+        AND user_status>0
+        limit 1
+    </select>
+
+    <!--根据用户名查用户-->
+    <select id="getUserByName" parameterType="String" resultType="com.subway.ssm.entity.User">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            user_name=#{value}
+        </where>
+        limit 1
+    </select>
+
+    <!--根据Email查用户-->
+    <select id="getUserByEmail" parameterType="String" resultType="com.subway.ssm.entity.User">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            user_email=#{value}
+        </where>
+        limit 1
+    </select>
+
+
+
+</mapper>
